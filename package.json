@@ -1,0 +1,37 @@
+{
+  "name": "agentpay",
+  "version": "0.1.0",
+  "description": "The Payment Layer for AI Agents — MCP server for USDC payments, micropayments, and cross-chain settlement",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "agentpay": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "ai-agents",
+    "payments",
+    "usdc",
+    "state-channels"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@circle-fin/modular-wallets-core": "^1.0.13",
+    "@erc7824/nitrolite": "^0.5.3",
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@types/node": "^25.2.1",
+    "@types/ws": "^8.18.1",
+    "dotenv": "^17.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "viem": "^2.45.1",
+    "ws": "^8.19.0",
+    "zod": "^4.3.6"
+  }
+}
