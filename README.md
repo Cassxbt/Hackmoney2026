@@ -108,8 +108,8 @@ Close a state channel and settle on-chain. Final balances are paid out.
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/agentpay.git
-cd agentpay
+git clone https://github.com/Cassxbt/Hackmoney2026.git
+cd Hackmoney2026
 npm install
 ```
 
@@ -274,7 +274,7 @@ This project was built during HackMoney 2026. Contributions welcome after the ha
 
 ## AI Attribution
 
-This project was built with assistance from Claude (Anthropic's AI). See [AI_ATTRIBUTION.md](./AI_ATTRIBUTION.md) for full disclosure of AI contributions.
+This project was built with assistance from Claude Code (Anthropic's AI). AI was used for code generation and debugging assistance. Architecture decisions and testing were human-driven.
 
 ## License
 
