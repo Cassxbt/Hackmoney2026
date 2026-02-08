@@ -5,3 +5,28 @@ dist/
 !.env.example
 *.log
 .DS_Store
+
+# IDE / tool config
+.agent/
+.agents/
+.claude/
+.cursor/
+.kiro/
+.qoder/
+.trae/
+.windsurf/
+
+# Internal strategy docs (not for submission)
+BOUNTIES.md
+DETAIL.md
+ERRORS.md
+FINAL_CHECKLIST.md
+GIT_INIT_COMMANDS.sh
+HACKMONEY_STRATEGY.md
+IMPLEMENTATION_GUIDE.md
+QUICK_START_CHANNELS.md
+SUBMISSION.md
+SUBMISSION_GUIDE.md
+SUBMISSION_PACKAGE_SUMMARY.md
+YELLOW_EXPERIMENTS.md
+YELLOW_NITROLITE_RESEARCH.md

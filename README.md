@@ -20,23 +20,9 @@ AgentPay gives agents money superpowers:
 
 ## Architecture
 
-```
-AI Agent (Claude, GPT, etc.)
-         |
-    MCP Tools
-         |
-  AgentPay Server
-         |
-   ┌─────┴─────┐
-   │           │
-Circle      Yellow       ENS
-Gateway    Nitrolite  Resolution
-Paymaster
-   │           │         │
-   └───────────┴─────────┘
-         |
-   On-chain (Base Sepolia)
-```
+![AgentPay Architecture](./architecture.svg)
+
+**Flow:** AI Agent → MCP Tools → AgentPay Server → Circle/Yellow/ENS → On-chain Settlement
 
 ## MCP Tools
 
@@ -210,7 +196,7 @@ Close the channel and settle on-chain
 
 ## Demo
 
-[Demo Video](https://youtube.com/link-to-demo)
+[Demo Video](https://youtube.com/watch?v=YOUR_VIDEO_ID) ← *Update after recording*
 
 Watch a live demo of:
 - Balance checking across chains

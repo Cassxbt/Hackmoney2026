@@ -9,6 +9,8 @@ import {
   createAuthVerifyMessageFromChallenge,
   createGetChannelsMessage,
   createGetLedgerBalancesMessage,
+  createCreateChannelMessage,
+  createResizeChannelMessage,
   createAppSessionMessage,
   createSubmitAppStateMessage,
   createCloseAppSessionMessage,
@@ -21,9 +23,10 @@ import {
   type RPCAppSessionAllocation,
 } from "@erc7824/nitrolite";
 
-const CLEARNODE_WS = "wss://clearnet.yellow.com/ws";
-const CUSTODY_ADDRESS = "0x490fb189DdE3a01B00be9BA5F41e3447FbC838b6" as Address;
-const ADJUDICATOR_ADDRESS = "0xcbbc03a873c11beeFA8676146721Fa00924d7e4" as Address;
+const CLEARNODE_WS = "wss://clearnet-sandbox.yellow.com/ws";
+const FAUCET_URL = "https://clearnet-sandbox.yellow.com/faucet/requestTokens";
+const CUSTODY_ADDRESS = "0x019B65A265EB3363822f2752141b3dF16131b262" as Address;
+const ADJUDICATOR_ADDRESS = "0x7c7ccbc98469190849BCC6c926307794fDfB11F2" as Address;
 
 export interface ChannelInfo {
   channelId: string;
@@ -56,6 +59,38 @@ export async function createNitroliteClient(privateKey: Hex) {
     chainId: baseSepolia.id,
     challengeDuration: 3600n,
   });
+}
+
+const USDC_BASE_SEPOLIA = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as Address;
+const YTEST_USD_SEPOLIA = "0xDB9F293e3898c9E5536A3be1b0C56c89d2b32DEb" as Address;
+const SANDBOX_ASSET = "ytest.usd";
+
+export async function depositToClearNode(privateKey: Hex, amount: string): Promise<{ success: boolean; txHash?: string; error?: string }> {
+  try {
+    const client = await createNitroliteClient(privateKey);
+    const amountWei = BigInt(Math.floor(parseFloat(amount) * 1e6));
+    const txHash = await client.deposit(USDC_BASE_SEPOLIA, amountWei);
+    return { success: true, txHash };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+export async function requestFaucetFunds(address: Address): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch(FAUCET_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userAddress: address }),
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      return { success: false, error: `Faucet request failed: ${response.status} ${text}` };
+    }
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
 }
 
 
@@ -220,6 +255,116 @@ export async function getLedgerBalances(connection: NitroliteConnection): Promis
   });
 }
 
+export interface ClearNodeChannel {
+  channelId: string;
+  token: string;
+  chainId: number;
+}
+
+export async function createClearNodeChannel(
+  connection: NitroliteConnection,
+  chainId: number = 11155111,
+  token: string = "ytest.usd"
+): Promise<{ success: true; channel: ClearNodeChannel } | { success: false; error: string }> {
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      connection.ws.off("message", handler);
+      resolve({ success: false, error: "Create channel timeout" });
+    }, 15000);
+
+    const handler = (data: WebSocket.Data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        const method = message.res?.[1];
+
+        if (method === "create_channel") {
+          clearTimeout(timeout);
+          connection.ws.off("message", handler);
+          const result = message.res?.[2];
+          if (result?.channel_id) {
+            resolve({
+              success: true,
+              channel: {
+                channelId: result.channel_id,
+                token,
+                chainId,
+              },
+            });
+          } else {
+            resolve({ success: false, error: "No channel_id in response" });
+          }
+        } else if (method === "error") {
+          clearTimeout(timeout);
+          connection.ws.off("message", handler);
+          resolve({ success: false, error: message.res?.[2]?.message || message.res?.[2]?.error || "Unknown error" });
+        }
+      } catch (err) {
+        clearTimeout(timeout);
+        connection.ws.off("message", handler);
+        resolve({ success: false, error: String(err) });
+      }
+    };
+
+    connection.ws.on("message", handler);
+
+    createCreateChannelMessage(connection.signer, { chain_id: chainId, token: token as `0x${string}` })
+      .then((msg) => connection.ws.send(msg))
+      .catch((err) => {
+        clearTimeout(timeout);
+        connection.ws.off("message", handler);
+        resolve({ success: false, error: String(err) });
+      });
+  });
+}
+
+export async function fundChannel(
+  connection: NitroliteConnection,
+  channelId: string,
+  amount: bigint
+): Promise<{ success: true } | { success: false; error: string }> {
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      connection.ws.off("message", handler);
+      resolve({ success: false, error: "Fund channel timeout" });
+    }, 15000);
+
+    const handler = (data: WebSocket.Data) => {
+      try {
+        const message = JSON.parse(data.toString());
+        const method = message.res?.[1];
+
+        if (method === "resize_channel") {
+          clearTimeout(timeout);
+          connection.ws.off("message", handler);
+          resolve({ success: true });
+        } else if (method === "error") {
+          clearTimeout(timeout);
+          connection.ws.off("message", handler);
+          resolve({ success: false, error: message.res?.[2]?.message || message.res?.[2]?.error || "Unknown error" });
+        }
+      } catch (err) {
+        clearTimeout(timeout);
+        connection.ws.off("message", handler);
+        resolve({ success: false, error: String(err) });
+      }
+    };
+
+    connection.ws.on("message", handler);
+
+    createResizeChannelMessage(connection.signer, {
+      channel_id: channelId as `0x${string}`,
+      allocate_amount: amount,
+      funds_destination: connection.address,
+    })
+      .then((msg) => connection.ws.send(msg))
+      .catch((err) => {
+        clearTimeout(timeout);
+        connection.ws.off("message", handler);
+        resolve({ success: false, error: String(err) });
+      });
+  });
+}
+
 export interface ChannelSession {
   appSessionId: string;
   counterparty: Address;
@@ -228,8 +373,6 @@ export interface ChannelSession {
   myAllocation: string;
   theirAllocation: string;
 }
-
-const USDC_BASE_SEPOLIA = "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as Address;
 
 export async function openChannel(
   connection: NitroliteConnection,
@@ -257,8 +400,8 @@ export async function openChannel(
               session: {
                 appSessionId: result.app_session_id,
                 counterparty,
-                asset: USDC_BASE_SEPOLIA,
-                version: 0,
+                asset: SANDBOX_ASSET,
+                version: result.version ?? 1,
                 myAllocation: amount,
                 theirAllocation: "0",
               },
@@ -285,14 +428,14 @@ export async function openChannel(
       protocol: RPCProtocolVersion.NitroRPC_0_4,
       participants: [connection.address, counterparty],
       weights: [1, 1],
-      quorum: 2,
+      quorum: 1,  // EXPERIMENT: trying single-signer mode
       challenge: 3600,
       nonce: Date.now(),
     };
 
     const allocations: RPCAppSessionAllocation[] = [
-      { asset: USDC_BASE_SEPOLIA, amount, participant: connection.address },
-      { asset: USDC_BASE_SEPOLIA, amount: "0", participant: counterparty },
+      { asset: SANDBOX_ASSET, amount, participant: connection.address },
+      { asset: SANDBOX_ASSET, amount: "0", participant: counterparty },
     ];
 
     createAppSessionMessage(connection.signer, { definition, allocations })

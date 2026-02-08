@@ -56,8 +56,8 @@ async function test() {
 
   // Step 4: Open channel
   console.log("\n4. Opening channel with test counterparty...");
-  console.log("   Note: Requires USDC deposited to ClearNode custody first");
-  const depositAmount = "0"; // Try zero to test protocol (real usage needs deposited funds)
+  console.log("   Note: Using 500000 wei (0.5 USDC)");
+  const depositAmount = "500000"; // 0.5 USDC
   let session;
   try {
     const result = await openChannel(connection, TEST_COUNTERPARTY, depositAmount);

@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed"/>
+      <stop offset="100%" style="stop-color:#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="yellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="600" y="50" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="28" font-weight="bold">AgentPay Architecture</text>
+  <text x="600" y="80" text-anchor="middle" fill="#6b7280" font-family="system-ui, sans-serif" font-size="14">The Payment Layer for AI Agents</text>
+
+  <!-- AI Agent Box (Left) -->
+  <rect x="50" y="250" width="200" height="200" rx="16" fill="#1f2937" stroke="#374151" stroke-width="2"/>
+  <text x="150" y="300" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="18" font-weight="600">AI Agent</text>
+  <text x="150" y="330" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="12">(Claude, GPT, etc.)</text>
+  <text x="150" y="370" text-anchor="middle" fill="#6b7280" font-family="system-ui, sans-serif" font-size="11">Requests:</text>
+  <text x="150" y="390" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10">agentpay_balance</text>
+  <text x="150" y="408" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10">agentpay_send</text>
+  <text x="150" y="426" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10">agentpay_micropay</text>
+
+  <!-- MCP Server Box (Center) -->
+  <rect x="400" y="200" width="280" height="300" rx="16" fill="url(#purpleGrad)" filter="url(#glow)"/>
+  <text x="540" y="250" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="20" font-weight="bold">AgentPay MCP</text>
+  <text x="540" y="275" text-anchor="middle" fill="#e9d5ff" font-family="system-ui, sans-serif" font-size="12">Model Context Protocol Server</text>
+
+  <!-- MCP Tools List -->
+  <rect x="420" y="295" width="240" height="185" rx="8" fill="rgba(0,0,0,0.3)"/>
+  <text x="540" y="320" text-anchor="middle" fill="#c4b5fd" font-family="system-ui, sans-serif" font-size="11" font-weight="600">5 MCP TOOLS</text>
+  <text x="440" y="350" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_balance</text>
+  <text x="440" y="372" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_send</text>
+  <text x="440" y="394" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_open_channel</text>
+  <text x="440" y="416" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_micropay</text>
+  <text x="440" y="438" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_close_channel</text>
+  <text x="440" y="468" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="9">+ ENS name resolution</text>
+
+  <!-- Yellow Network Box (Top Right) -->
+  <rect x="850" y="120" width="280" height="130" rx="16" fill="url(#yellowGrad)"/>
+  <text x="990" y="160" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Yellow Network</text>
+  <text x="990" y="185" text-anchor="middle" fill="#fef3c7" font-family="system-ui, sans-serif" font-size="11">State Channels (Nitrolite SDK)</text>
+  <text x="990" y="210" text-anchor="middle" fill="#fde68a" font-family="system-ui, sans-serif" font-size="10">Instant off-chain micropayments</text>
+  <text x="990" y="230" text-anchor="middle" fill="#fde68a" font-family="system-ui, sans-serif" font-size="10">On-chain settlement</text>
+
+  <!-- Circle Box (Middle Right) -->
+  <rect x="850" y="280" width="280" height="130" rx="16" fill="url(#blueGrad)"/>
+  <text x="990" y="320" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Circle</text>
+  <text x="990" y="345" text-anchor="middle" fill="#bfdbfe" font-family="system-ui, sans-serif" font-size="11">Gateway + Paymaster</text>
+  <text x="990" y="370" text-anchor="middle" fill="#93c5fd" font-family="system-ui, sans-serif" font-size="10">Cross-chain USDC balance</text>
+  <text x="990" y="390" text-anchor="middle" fill="#93c5fd" font-family="system-ui, sans-serif" font-size="10">Gas-free transactions</text>
+
+  <!-- ENS Box (Bottom Right) -->
+  <rect x="850" y="440" width="280" height="130" rx="16" fill="url(#greenGrad)"/>
+  <text x="990" y="480" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">ENS</text>
+  <text x="990" y="505" text-anchor="middle" fill="#a7f3d0" font-family="system-ui, sans-serif" font-size="11">Ethereum Name Service</text>
+  <text x="990" y="530" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">Human-readable addresses</text>
+  <text x="990" y="550" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">vitalik.eth → 0xd8dA...</text>
+
+  <!-- Arrows: Agent to MCP -->
+  <path d="M 250 350 L 390 350" stroke="#a78bfa" stroke-width="3" marker-end="url(#arrowPurple)"/>
+  <defs>
+    <marker id="arrowPurple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <text x="320" y="340" text-anchor="middle" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="10">MCP</text>
+  <text x="320" y="355" text-anchor="middle" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="10">Protocol</text>
+
+  <!-- Arrows: MCP to Yellow -->
+  <path d="M 680 300 L 750 220 L 840 185" stroke="#fbbf24" stroke-width="2" fill="none" marker-end="url(#arrowYellow)"/>
+  <defs>
+    <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#fbbf24"/>
+    </marker>
+  </defs>
+  <text x="760" y="200" fill="#fbbf24" font-family="system-ui, sans-serif" font-size="9">WebSocket</text>
+
+  <!-- Arrows: MCP to Circle -->
+  <path d="M 680 350 L 840 345" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <defs>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#60a5fa"/>
+    </marker>
+  </defs>
+  <text x="760" y="335" fill="#60a5fa" font-family="system-ui, sans-serif" font-size="9">REST API</text>
+
+  <!-- Arrows: MCP to ENS -->
+  <path d="M 680 400 L 750 480 L 840 505" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <defs>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <text x="760" y="510" fill="#34d399" font-family="system-ui, sans-serif" font-size="9">viem/ENS</text>
+
+  <!-- Flow Labels at Bottom -->
+  <rect x="50" y="600" width="1100" height="70" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <text x="600" y="625" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="12" font-weight="600">PAYMENT FLOW</text>
+  <text x="600" y="650" text-anchor="middle" fill="#6b7280" font-family="system-ui, sans-serif" font-size="11">Agent requests payment → MCP routes to Yellow (micropay) or Circle (send) → ENS resolves names → Transaction confirmed</text>
+
+  <!-- Version/Event -->
+  <text x="1150" y="680" text-anchor="end" fill="#4b5563" font-family="system-ui, sans-serif" font-size="10">HackMoney 2026</text>
+</svg>
