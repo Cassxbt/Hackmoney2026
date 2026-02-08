@@ -120,6 +120,8 @@ function Demo() {
   const [step, setStep] = useState(0);
   const [agentHighlight, setAgentHighlight] = useState(false);
   const [serviceHighlight, setServiceHighlight] = useState(false);
+  const [sending, setSending] = useState(false);
+  const keepaliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const logIdRef = useRef(0);
 
@@ -272,6 +274,16 @@ function Demo() {
             addLog(wallet, 'Authenticated!', 'success');
             if (wallet === 'agent') {
               setAgent(prev => ({ ...prev, ws, signer: ecdsaSigner, eip712Signer, connected: true, authenticated: true }));
+              // Keepalive: query balance every 30s to prevent sandbox idle timeout
+              if (keepaliveRef.current) clearInterval(keepaliveRef.current);
+              keepaliveRef.current = setInterval(async () => {
+                if (ws.readyState === WebSocket.OPEN) {
+                  try {
+                    const ping = await createGetLedgerBalancesMessage(ecdsaSigner);
+                    ws.send(ping);
+                  } catch {}
+                }
+              }, 30000);
             } else {
               setService(prev => ({ ...prev, ws, signer: ecdsaSigner, eip712Signer, connected: true, authenticated: true }));
             }
@@ -290,6 +302,7 @@ function Demo() {
       ws.onclose = () => {
         addLog(wallet, 'WebSocket closed', 'warning');
         if (wallet === 'agent') {
+          if (keepaliveRef.current) { clearInterval(keepaliveRef.current); keepaliveRef.current = null; }
           setAgent(prev => ({ ...prev, connected: false, authenticated: false }));
         } else {
           setService(prev => ({ ...prev, connected: false, authenticated: false }));
@@ -393,7 +406,7 @@ function Demo() {
   }, [agent, service.address, addLog]);
 
   const sendMicropay = useCallback(async () => {
-    if (!agent.ws || !agent.signer || !agent.address || !service.address || !sessionId) return;
+    if (!agent.ws || !agent.signer || !agent.address || !service.address || !sessionId || sending) return;
 
     // Check WebSocket is still open
     if (agent.ws.readyState !== WebSocket.OPEN) {
@@ -402,6 +415,7 @@ function Demo() {
       return;
     }
 
+    setSending(true);
     addLog('protocol', 'Sending micropayment...', 'info');
     addLog('agent', 'Submitting state update...', 'info');
 
@@ -427,6 +441,7 @@ function Demo() {
       if (!handled) {
         handled = true;
         agent.ws?.removeEventListener('message', handler);
+        setSending(false);
       }
     };
 
@@ -489,7 +504,7 @@ function Demo() {
       cleanup();
       addLog('protocol', `Send error: ${err}`, 'error');
     }
-  }, [agent, service.address, sessionId, stateVersion, addLog]);
+  }, [agent, service.address, sessionId, stateVersion, sending, addLog]);
 
   useEffect(() => {
     initWallets();
@@ -561,10 +576,10 @@ function Demo() {
               </button>
               <button
                 onClick={sendMicropay}
-                disabled={step < 4}
-                className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 rounded-lg font-medium"
+                disabled={step < 4 || sending}
+                className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 disabled:opacity-60 rounded-lg font-medium"
               >
-                4. Send Micropayment
+                {sending ? '4. Sending...' : '4. Send Micropayment'}
               </button>
             </div>
 
