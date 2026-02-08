@@ -16,8 +16,11 @@ dist/
 .trae/
 .windsurf/
 
-# Internal strategy docs (not for submission)
+# All .md files except README
+AI_ATTRIBUTION.md
 BOUNTIES.md
+CLAUDE.md
+DEMO_SCRIPT.md
 DETAIL.md
 ERRORS.md
 FINAL_CHECKLIST.md
