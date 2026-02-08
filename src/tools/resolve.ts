@@ -18,14 +18,11 @@ export async function handleResolve(name: string) {
       };
 
       if (ensName) {
-        const [avatar, description, url] = await Promise.all([
-          client.getEnsText({ name: normalize(ensName), key: "avatar" }).catch(() => null),
-          client.getEnsText({ name: normalize(ensName), key: "description" }).catch(() => null),
-          client.getEnsText({ name: normalize(ensName), key: "url" }).catch(() => null),
-        ]);
-        if (avatar) result.avatar = avatar;
-        if (description) result.description = description;
-        if (url) result.url = url;
+        const keys = ["avatar", "description", "url", "com.twitter", "com.github", "com.discord"];
+        const values = await Promise.all(
+          keys.map((key) => client.getEnsText({ name: normalize(ensName), key }).catch(() => null))
+        );
+        keys.forEach((key, i) => { if (values[i]) result[key] = values[i]; });
       }
 
       return {
@@ -44,19 +41,16 @@ export async function handleResolve(name: string) {
         };
       }
 
-      const [avatar, description, url] = await Promise.all([
-        client.getEnsText({ name: normalized, key: "avatar" }).catch(() => null),
-        client.getEnsText({ name: normalized, key: "description" }).catch(() => null),
-        client.getEnsText({ name: normalized, key: "url" }).catch(() => null),
-      ]);
+      const keys = ["avatar", "description", "url", "com.twitter", "com.github", "com.discord"];
+      const values = await Promise.all(
+        keys.map((key) => client.getEnsText({ name: normalized, key }).catch(() => null))
+      );
 
       const result: Record<string, string | null> = {
         ensName: name,
         address,
       };
-      if (avatar) result.avatar = avatar;
-      if (description) result.description = description;
-      if (url) result.url = url;
+      keys.forEach((key, i) => { if (values[i]) result[key] = values[i]; });
 
       return {
         content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],

@@ -52,13 +52,13 @@
 
   <!-- MCP Tools List -->
   <rect x="420" y="295" width="240" height="185" rx="8" fill="rgba(0,0,0,0.3)"/>
-  <text x="540" y="320" text-anchor="middle" fill="#c4b5fd" font-family="system-ui, sans-serif" font-size="11" font-weight="600">5 MCP TOOLS</text>
+  <text x="540" y="320" text-anchor="middle" fill="#c4b5fd" font-family="system-ui, sans-serif" font-size="11" font-weight="600">6 MCP TOOLS</text>
   <text x="440" y="350" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_balance</text>
   <text x="440" y="372" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_send</text>
   <text x="440" y="394" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_open_channel</text>
   <text x="440" y="416" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_micropay</text>
   <text x="440" y="438" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_close_channel</text>
-  <text x="440" y="468" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="9">+ ENS name resolution</text>
+  <text x="440" y="460" fill="#e9d5ff" font-family="monospace" font-size="10">agentpay_resolve_ens</text>
 
   <!-- Yellow Network Box (Top Right) -->
   <rect x="850" y="120" width="280" height="130" rx="16" fill="url(#yellowGrad)"/>
@@ -77,9 +77,9 @@
   <!-- ENS Box (Bottom Right) -->
   <rect x="850" y="440" width="280" height="130" rx="16" fill="url(#greenGrad)"/>
   <text x="990" y="480" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">ENS</text>
-  <text x="990" y="505" text-anchor="middle" fill="#a7f3d0" font-family="system-ui, sans-serif" font-size="11">Ethereum Name Service</text>
-  <text x="990" y="530" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">Human-readable addresses</text>
-  <text x="990" y="550" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">vitalik.eth → 0xd8dA...</text>
+  <text x="990" y="505" text-anchor="middle" fill="#a7f3d0" font-family="system-ui, sans-serif" font-size="11">Bidirectional Resolution + Profiles</text>
+  <text x="990" y="530" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">Avatar, social records, metadata</text>
+  <text x="990" y="550" text-anchor="middle" fill="#6ee7b7" font-family="system-ui, sans-serif" font-size="10">Identity-aware payment routing</text>
 
   <!-- Arrows: Agent to MCP -->
   <path d="M 250 350 L 390 350" stroke="#a78bfa" stroke-width="3" marker-end="url(#arrowPurple)"/>
@@ -107,7 +107,7 @@
       <path d="M0,0 L0,6 L9,3 z" fill="#60a5fa"/>
     </marker>
   </defs>
-  <text x="760" y="335" fill="#60a5fa" font-family="system-ui, sans-serif" font-size="9">REST API</text>
+  <text x="760" y="335" fill="#60a5fa" font-family="system-ui, sans-serif" font-size="9">REST + ERC-4337</text>
 
   <!-- Arrows: MCP to ENS -->
   <path d="M 680 400 L 750 480 L 840 505" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
@@ -118,10 +118,21 @@
   </defs>
   <text x="760" y="510" fill="#34d399" font-family="system-ui, sans-serif" font-size="9">viem/ENS</text>
 
+  <!-- Base L2 Settlement -->
+  <path d="M 990 570 L 990 595" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arrowGray)"/>
+  <path d="M 990 280 L 990 255 L 540 255 L 540 500 L 540 595" stroke="#6b7280" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+  <defs>
+    <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+  <rect x="400" y="595" width="340" height="55" rx="12" fill="#1f2937" stroke="#374151" stroke-width="1.5"/>
+  <text x="570" y="622" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Base (L2)</text>
+  <text x="570" y="640" text-anchor="middle" fill="#6b7280" font-family="system-ui, sans-serif" font-size="10">USDC Settlement Layer</text>
+
   <!-- Flow Labels at Bottom -->
-  <rect x="50" y="600" width="1100" height="70" rx="12" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-  <text x="600" y="625" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="12" font-weight="600">PAYMENT FLOW</text>
-  <text x="600" y="650" text-anchor="middle" fill="#6b7280" font-family="system-ui, sans-serif" font-size="11">Agent requests payment → MCP routes to Yellow (micropay) or Circle (send) → ENS resolves names → Transaction confirmed</text>
+  <rect x="50" y="665" width="1100" height="30" rx="8" fill="rgba(255,255,255,0.02)"/>
+  <text x="600" y="685" text-anchor="middle" fill="#4b5563" font-family="system-ui, sans-serif" font-size="10">Agent requests payment → MCP routes to Yellow (micropay) or Circle (send) → ENS resolves names → Settles on Base</text>
 
   <!-- Version/Event -->
   <text x="1150" y="680" text-anchor="end" fill="#4b5563" font-family="system-ui, sans-serif" font-size="10">HackMoney 2026</text>

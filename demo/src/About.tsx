@@ -10,6 +10,152 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.06 } },
 };
 
+const diagramFade = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
+const nodeReveal = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
+const nodeStagger = {
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+function ArchitectureDiagram() {
+  return (
+    <motion.div
+      className="relative w-full max-w-4xl mx-auto"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-40px' }}
+      variants={nodeStagger}
+    >
+      {/* AI Agent */}
+      <motion.div variants={nodeReveal} className="flex justify-center mb-2">
+        <div className="px-8 py-5 rounded-lg border border-white/[0.08] bg-white/[0.02] text-center min-w-[220px]">
+          <div className="text-sm font-medium text-white/70 mb-1">AI Agent</div>
+          <div className="text-[11px] text-white/25 font-mono">Claude, GPT, Custom</div>
+        </div>
+      </motion.div>
+
+      {/* Connector: Agent to MCP */}
+      <motion.div variants={diagramFade} className="flex justify-center">
+        <div className="flex flex-col items-center">
+          <div className="w-px h-8 bg-gradient-to-b from-white/[0.08] to-yellow-400/30" />
+          <div className="text-[10px] font-mono text-yellow-400/50 tracking-wider py-1">MCP PROTOCOL</div>
+          <div className="w-px h-8 bg-gradient-to-b from-yellow-400/30 to-white/[0.08]" />
+        </div>
+      </motion.div>
+
+      {/* AgentPay MCP Server */}
+      <motion.div variants={nodeReveal} className="flex justify-center mb-2">
+        <div className="px-8 py-6 rounded-lg border border-yellow-400/20 bg-yellow-400/[0.03] text-center min-w-[280px]">
+          <div className="text-base font-semibold text-yellow-400/90 mb-1.5">AgentPay MCP Server</div>
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-[10px] font-mono text-white/30">
+            <span>balance</span>
+            <span>send</span>
+            <span>open_channel</span>
+            <span>micropay</span>
+            <span>close_channel</span>
+            <span>resolve_ens</span>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Connector: MCP to services (three branches) */}
+      <motion.div variants={diagramFade} className="relative flex justify-center">
+        <div className="flex items-start w-full max-w-2xl">
+          {/* Left branch */}
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-10 bg-gradient-to-b from-white/[0.08] to-amber-400/30" />
+            <div className="text-[9px] font-mono text-amber-400/40 tracking-wider py-0.5">WEBSOCKET</div>
+            <div className="w-px h-6 bg-amber-400/20" />
+          </div>
+          {/* Center branch */}
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-10 bg-gradient-to-b from-white/[0.08] to-blue-400/30" />
+            <div className="text-[9px] font-mono text-blue-400/40 tracking-wider py-0.5">REST + ERC-4337</div>
+            <div className="w-px h-6 bg-blue-400/20" />
+          </div>
+          {/* Right branch */}
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-10 bg-gradient-to-b from-white/[0.08] to-emerald-400/30" />
+            <div className="text-[9px] font-mono text-emerald-400/40 tracking-wider py-0.5">VIEM / RPC</div>
+            <div className="w-px h-6 bg-emerald-400/20" />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Three service boxes */}
+      <motion.div variants={nodeReveal} className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-2">
+        {/* Yellow Network */}
+        <div className="px-4 py-5 rounded-lg border border-amber-400/15 bg-amber-400/[0.02] text-center">
+          <div className="text-sm font-medium text-amber-400/80 mb-1.5">Yellow Network</div>
+          <div className="text-[10px] text-white/25 leading-relaxed">
+            Nitrolite state channels<br />
+            Off-chain micropayments<br />
+            Single settlement tx
+          </div>
+        </div>
+        {/* Circle */}
+        <div className="px-4 py-5 rounded-lg border border-blue-400/15 bg-blue-400/[0.02] text-center">
+          <div className="text-sm font-medium text-blue-400/80 mb-1.5">Circle</div>
+          <div className="text-[10px] text-white/25 leading-relaxed">
+            Gateway: cross-chain USDC<br />
+            Paymaster: gas in USDC<br />
+            7 chains, unified balance
+          </div>
+        </div>
+        {/* ENS */}
+        <div className="px-4 py-5 rounded-lg border border-emerald-400/15 bg-emerald-400/[0.02] text-center">
+          <div className="text-sm font-medium text-emerald-400/80 mb-1.5">ENS</div>
+          <div className="text-[10px] text-white/25 leading-relaxed">
+            Bidirectional resolution<br />
+            Full profile + social records<br />
+            Identity-aware routing
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Connector: services to blockchain */}
+      <motion.div variants={diagramFade} className="relative flex justify-center">
+        <div className="flex items-start w-full max-w-2xl">
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-8 bg-white/[0.06]" />
+          </div>
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-8 bg-white/[0.06]" />
+          </div>
+          <div className="flex-1 flex flex-col items-center">
+            <div className="w-px h-8 bg-white/[0.06]" />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Base blockchain */}
+      <motion.div variants={nodeReveal} className="flex justify-center">
+        <div className="px-10 py-4 rounded-lg border border-white/[0.06] bg-white/[0.015] text-center">
+          <div className="text-sm font-medium text-white/50 mb-0.5">Base (L2)</div>
+          <div className="text-[10px] text-white/20 font-mono">USDC Settlement Layer</div>
+        </div>
+      </motion.div>
+
+      {/* Payment flow label */}
+      <motion.div variants={diagramFade} className="mt-8 text-center">
+        <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/[0.04] bg-white/[0.015]">
+          <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/60" />
+          <span className="text-[11px] text-white/25 font-mono tracking-wide">
+            Agent requests payment &rarr; MCP routes to service &rarr; Settlement on Base
+          </span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 const problems = [
   {
     title: 'API Marketplaces',
@@ -159,29 +305,19 @@ function About() {
       </section>
 
       <section className="py-24 px-6 lg:px-12">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
+            className="mb-14"
           >
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">Architecture</h2>
-            <div className="space-y-6 text-white/40 leading-relaxed text-[17px]">
-              <p>
-                <span className="text-white/70 font-medium">MCP Protocol.</span> AgentPay implements the Model Context Protocol standard with seven financial tools. Any MCP-compatible AI assistant connects to AgentPay and gains the ability to check balances, send payments, resolve names, and manage micropayment channels.
-              </p>
-              <p>
-                <span className="text-white/70 font-medium">Yellow Network.</span> Micropayments run through Yellow Network's Nitrolite state channels. Two parties lock funds on-chain once, exchange unlimited signed state updates off-chain at zero cost, then settle with a single closing transaction.
-              </p>
-              <p>
-                <span className="text-white/70 font-medium">Circle.</span> Circle's Paymaster contract eliminates gas friction by paying transaction fees in USDC. The Gateway API provides a unified balance view across seven supported chains through a single API call.
-              </p>
-              <p>
-                <span className="text-white/70 font-medium">ENS.</span> ENS replaces raw addresses with readable names. Agents send to <code className="text-yellow-400/70 text-sm">vitalik.eth</code> instead of <code className="text-white/30 text-sm">0xd8dA6BF2...</code>, making payment instructions auditable and human-friendly.
-              </p>
-            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">Architecture</h2>
+            <p className="text-white/30 text-lg font-light tracking-wide">How the payment stack connects</p>
           </motion.div>
+
+          <ArchitectureDiagram />
         </div>
       </section>
 

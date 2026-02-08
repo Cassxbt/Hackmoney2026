@@ -75,12 +75,12 @@ Close a state channel and settle on-chain. Final balances are paid out.
 **Returns:** Final allocations, settlement transaction
 
 ### `agentpay_resolve`
-Look up an ENS name or address. Forward resolution (name to address) and reverse resolution (address to name). Returns text records (avatar, description, URL) when available.
+Look up an ENS name or address. Bidirectional resolution (name to address and address to name). Returns full ENS profile including text records and social accounts.
 
 **Parameters:**
 - `name` — ENS name (e.g. `vitalik.eth`) or address (`0x...`)
 
-**Returns:** Resolved address/name, avatar, description, URL
+**Returns:** Resolved address/name, avatar, description, URL, social records (Twitter, GitHub, Discord)
 
 ## Tech Stack
 
@@ -288,15 +288,17 @@ ENS enables agents to use human-readable names instead of raw addresses:
 2. `agentpay_resolve` calls `getEnsName()` to find the primary ENS name
 3. Returns `vitalik.eth` — making raw addresses human-readable
 
-**Text Record Lookups:**
-- `agentpay_resolve` fetches ENS text records: avatar, description, URL
-- Agents can discover metadata about counterparties before transacting
+**ENS Profile Lookups:**
+- `agentpay_resolve` fetches full ENS profiles: avatar, description, URL, and social records (Twitter, GitHub, Discord)
+- Agents build a complete counterparty profile before transacting
+- Social records enable identity verification across platforms
 
 **Why it matters for agents:**
 - Agents can reference other agents/services by name, not 42-character hex addresses
 - Reverse resolution makes transaction logs and balance outputs readable
-- Text records enable agent discovery — "what does this service do?"
-- Any `.eth` name resolves automatically — agents can pay ENS-named services without address books
+- Full profile lookups enable agent discovery and trust assessment before payment
+- Social records cross-reference identity across Twitter, GitHub, Discord
+- Any `.eth` name resolves automatically with full metadata
 
 **Code:** `src/tools/send.ts` (forward resolution in payments), `src/tools/resolve.ts` (dedicated ENS lookup tool)
 

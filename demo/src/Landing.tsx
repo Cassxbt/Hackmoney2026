@@ -317,7 +317,7 @@ const features = [
   },
   {
     title: 'ENS Identity',
-    description: 'Send to names, not addresses. Resolve ENS names, avatars, and text records for human-readable payment routing.',
+    description: 'Send to names, not addresses. Resolve full ENS profiles including avatars, social records, and metadata for identity-aware payment routing.',
     tools: ['agentpay_resolve'],
     color: 'sky',
     icon: (

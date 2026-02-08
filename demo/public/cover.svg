@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="cbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050508"/>
+      <stop offset="100%" stop-color="#0a0a14"/>
+    </linearGradient>
+    <linearGradient id="cbolt" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <radialGradient id="ambientYellow" cx="0.45" cy="0.35" r="0.5">
+      <stop offset="0%" stop-color="rgba(250,204,21,0.06)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <radialGradient id="ambientBlue" cx="0.65" cy="0.7" r="0.4">
+      <stop offset="0%" stop-color="rgba(59,130,246,0.04)"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+    <filter id="cglow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#cbg)"/>
+  <rect width="1280" height="720" fill="url(#ambientYellow)"/>
+  <rect width="1280" height="720" fill="url(#ambientBlue)"/>
+  <!-- Grid overlay -->
+  <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+    <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+  </pattern>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <!-- Lightning bolt icon (centered above text) -->
+  <g transform="translate(580, 140)" filter="url(#cglow)">
+    <path d="M 52 0 L 22 90 L 48 90 L 38 176 L 82 70 L 54 70 L 72 0 Z" fill="url(#cbolt)" transform="scale(0.7)"/>
+  </g>
+  <!-- AgentPay text (centered) -->
+  <text x="640" y="360" text-anchor="middle" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="96" font-weight="800" letter-spacing="-3">
+    <tspan fill="#facc15">Agent</tspan><tspan fill="rgba(255,255,255,0.92)">Pay</tspan>
+  </text>
+  <!-- Tagline (centered) -->
+  <text x="640" y="415" text-anchor="middle" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="26" font-weight="300" fill="rgba(255,255,255,0.35)" letter-spacing="0.5">The Payment Layer for AI Agents</text>
+  <!-- Sponsors (centered) -->
+  <text x="640" y="510" text-anchor="middle" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="13" font-weight="400" fill="rgba(255,255,255,0.2)" letter-spacing="3">BUILT WITH</text>
+  <text x="640" y="540" text-anchor="middle" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="17" font-weight="300" fill="rgba(255,255,255,0.25)" letter-spacing="1">Yellow Network  ·  Circle  ·  ENS</text>
+  <!-- HackMoney badge (centered) -->
+  <rect x="560" y="565" width="160" height="28" rx="14" fill="rgba(250,204,21,0.08)" stroke="rgba(250,204,21,0.12)" stroke-width="1"/>
+  <circle cx="576" cy="579" r="3" fill="#facc15"/>
+  <text x="587" y="584" font-family="Inter, -apple-system, system-ui, sans-serif" font-size="12" font-weight="500" fill="rgba(250,204,21,0.85)">HackMoney 2026</text>
+</svg>

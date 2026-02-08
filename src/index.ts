@@ -71,7 +71,7 @@ server.tool(
 
 server.tool(
   "agentpay_resolve",
-  "Look up an ENS name or address. Forward resolution (name → address) and reverse resolution (address → name). Returns avatar, description, and URL if available.",
+  "Look up an ENS name or address. Forward resolution (name → address) and reverse resolution (address → name). Returns full ENS profile: avatar, description, URL, and social records (Twitter, GitHub, Discord).",
   {
     name: z.string().describe("ENS name (e.g. vitalik.eth) or address (0x...) to resolve"),
   },
