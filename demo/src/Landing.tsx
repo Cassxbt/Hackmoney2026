@@ -746,9 +746,17 @@ function Landing() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-5">See It Live</h2>
-          <p className="text-white/30 text-lg font-light tracking-wide mb-10">
+          <p className="text-white/30 text-lg font-light tracking-wide mb-8">
             Watch micropayments stream between two wallets in real time.
           </p>
+          <div className="relative w-full max-w-3xl mx-auto mb-10 rounded-xl overflow-hidden border border-white/[0.08]" style={{ paddingBottom: '62.5%' }}>
+            <iframe
+              src="https://www.loom.com/embed/64498d6b7d3846469460852363539647"
+              frameBorder="0"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full"
+            />
+          </div>
           <Link
             to="/demo"
             className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-b from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-bold text-lg rounded-xl transition-all shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/25 hover:translate-y-[-1px]"
