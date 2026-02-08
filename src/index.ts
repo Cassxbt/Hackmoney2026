@@ -8,6 +8,7 @@ import { handleBalance } from "./tools/balance.js";
 import { handleSend } from "./tools/send.js";
 import { handleGetAddress } from "./tools/address.js";
 import { handleOpenChannel, handleMicropay, handleCloseChannel } from "./tools/channel.js";
+import { handleResolve } from "./tools/resolve.js";
 
 const server = new McpServer({
   name: "agentpay",
@@ -66,6 +67,15 @@ server.tool(
     sessionId: z.string().optional().describe("Channel session ID (uses active channel if omitted)"),
   },
   async ({ sessionId }) => handleCloseChannel(sessionId)
+);
+
+server.tool(
+  "agentpay_resolve",
+  "Look up an ENS name or address. Forward resolution (name → address) and reverse resolution (address → name). Returns avatar, description, and URL if available.",
+  {
+    name: z.string().describe("ENS name (e.g. vitalik.eth) or address (0x...) to resolve"),
+  },
+  async ({ name }) => handleResolve(name)
 );
 
 async function main() {

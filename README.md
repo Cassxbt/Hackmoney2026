@@ -26,7 +26,7 @@ AgentPay gives agents money superpowers:
 
 ## MCP Tools
 
-AgentPay exposes 6 tools to AI agents:
+AgentPay exposes 7 tools to AI agents:
 
 ### `agentpay_balance`
 Check USDC balance across all supported chains (unified via Circle Gateway).
@@ -73,6 +73,14 @@ Close a state channel and settle on-chain. Final balances are paid out.
 - `sessionId` — Channel session ID (uses active channel if omitted)
 
 **Returns:** Final allocations, settlement transaction
+
+### `agentpay_resolve`
+Look up an ENS name or address. Forward resolution (name to address) and reverse resolution (address to name). Returns text records (avatar, description, URL) when available.
+
+**Parameters:**
+- `name` — ENS name (e.g. `vitalik.eth`) or address (`0x...`)
+
+**Returns:** Resolved address/name, avatar, description, URL
 
 ## Tech Stack
 
@@ -196,37 +204,101 @@ Close the channel and settle on-chain
 
 ## Demo
 
-[Demo Video](https://youtube.com/watch?v=YOUR_VIDEO_ID) ← *Update after recording*
+[Demo Video](https://youtube.com/watch?v=YOUR_VIDEO_ID)
 
-Watch a live demo of:
-- Balance checking across chains
-- Gas-free USDC sends via Paymaster
-- ENS resolution (sending to .eth names)
-- State channel micropayments (1000 payments, 1 on-chain tx)
+### Live Web Demo
+
+The project includes a standalone web demo showing real-time micropayments between two wallets:
+
+```bash
+cd demo && npm install && npm run dev
+# Open http://localhost:5173
+```
+
+The demo walks through four steps:
+1. **Generate Wallets** — Two fresh wallets (agent + service provider)
+2. **Fund via Faucet** — Request testnet USDC from Yellow's faucet
+3. **Connect to ClearNode** — WebSocket auth + EIP-712 challenge-response
+4. **Stream Micropayments** — Click to send instant off-chain payments, watch balances update in real time
+
+### What the Demo Shows
+
+- Two wallets authenticating to Yellow Network's ClearNode via WebSocket
+- A state channel opening between them with 1 USDC locked
+- Micropayments of $0.01 streaming instantly — no on-chain transactions, no gas
+- Real-time balance updates on both sides
+- Full protocol logs visible in terminal panels
 
 ## Sponsor Integrations
 
-### Yellow Network — Nitrolite SDK
-- State channels via ERC-7824 standard
-- Connected to ClearNode WebSocket (wss://clearnet.yellow.com/ws)
-- Full channel lifecycle: open, update, close
-- 250x cost savings vs on-chain
+### Yellow Network — Nitrolite SDK (`@erc7824/nitrolite`)
 
-**Code:** `/src/lib/nitrolite.ts`, `/src/tools/channel.ts`
+Yellow Network's Nitrolite protocol enables off-chain state channels for instant micropayments. Here's how we use it:
+
+**Authentication Flow:**
+1. Generate wallet keypair + session key
+2. Connect to ClearNode WebSocket (`wss://clearnet.yellow.com/ws`)
+3. Send `auth_request` with wallet address and session key
+4. Receive `auth_challenge` — an EIP-712 typed message
+5. Sign challenge with `createEIP712AuthMessageSigner` and send `auth_verify`
+6. ClearNode confirms authentication
+
+**State Channel Lifecycle:**
+1. **Open** — `createAppSessionMessage()` creates a channel between two participants with initial allocations (e.g., agent: 1 USDC, service: 0 USDC)
+2. **Update** — `createSubmitAppStateMessage()` sends signed state updates that rebalance allocations (e.g., agent: 0.99, service: 0.01). Each update increments the version number. No on-chain transactions.
+3. **Close** — Final state is submitted on-chain for settlement
+
+**Key functions used:** `createAuthRequestMessage`, `createAuthVerifyMessageFromChallenge`, `createEIP712AuthMessageSigner`, `createECDSAMessageSigner`, `createAppSessionMessage`, `createSubmitAppStateMessage`, `createGetLedgerBalancesMessage`
+
+**Code:** `src/lib/nitrolite.ts`, `src/tools/channel.ts`, `demo/src/Demo.tsx`
 
 ### Circle — Gateway + Paymaster
-- **Paymaster:** Gas-free USDC transactions via ERC-4337 smart accounts
-- **Gateway:** Unified USDC balance across Arbitrum, Base, Polygon, Ethereum, Optimism (7 chains)
-- Agents never hold ETH, never manage gas
 
-**Code:** `/src/lib/paymaster.ts`, `/src/lib/balance.ts`
+Two Circle products working together to make agent payments gas-free and cross-chain:
 
-### ENS
-- `.eth` name resolution via mainnet lookup
-- Agents send to readable names, not 0x addresses
-- Future: Agent registry via ENS subdomains
+**Circle Gateway (Balance API):**
+- POST to `https://gateway-api-testnet.circle.com/v1/balances`
+- Accepts array of `{ domain, depositor }` sources for multi-chain lookup
+- Returns unified USDC balance across Base, Ethereum, Arbitrum, Optimism, Polygon, Avalanche (7 chains)
+- Used by `agentpay_balance` tool
 
-**Code:** `/src/tools/send.ts` (lines 15-33)
+**Circle Paymaster (ERC-4337):**
+- Paymaster contract: `0x31BE08D380A21fc740883c0BC434FcFc88740b58` on Base Sepolia
+- Creates a Circle Smart Account via `toCircleSmartAccount()` (account abstraction)
+- Gas is paid in USDC using EIP-2612 permits — agent signs a permit allowing the paymaster to deduct USDC for gas
+- Transactions sent as UserOperations through Pimlico bundler
+- Agents never hold ETH, never manage gas nonces
+
+**Transaction flow:** Agent calls `agentpay_send` → Paymaster signs permit for gas in USDC → Bundler submits UserOperation → USDC transfer executes on-chain → Gas deducted from agent's USDC balance
+
+**Code:** `src/lib/paymaster.ts`, `src/lib/balance.ts`, `src/lib/config.ts`
+
+### ENS — Agent Identity & Payment Routing
+
+ENS enables agents to use human-readable names instead of raw addresses:
+
+**Forward Resolution (name → address):**
+1. Agent receives a payment request: "Send 0.01 USDC to vitalik.eth"
+2. AgentPay normalizes the ENS name using `normalize()` from `viem/ens`
+3. Resolves to an Ethereum address via `getEnsAddress()` on mainnet
+4. Uses the resolved address for the USDC transfer
+
+**Reverse Resolution (address → name):**
+1. Agent receives an address: `0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`
+2. `agentpay_resolve` calls `getEnsName()` to find the primary ENS name
+3. Returns `vitalik.eth` — making raw addresses human-readable
+
+**Text Record Lookups:**
+- `agentpay_resolve` fetches ENS text records: avatar, description, URL
+- Agents can discover metadata about counterparties before transacting
+
+**Why it matters for agents:**
+- Agents can reference other agents/services by name, not 42-character hex addresses
+- Reverse resolution makes transaction logs and balance outputs readable
+- Text records enable agent discovery — "what does this service do?"
+- Any `.eth` name resolves automatically — agents can pay ENS-named services without address books
+
+**Code:** `src/tools/send.ts` (forward resolution in payments), `src/tools/resolve.ts` (dedicated ENS lookup tool)
 
 ## Test Addresses
 
@@ -238,13 +310,14 @@ Watch a live demo of:
 ## Roadmap
 
 **MVP (HackMoney 2026):**
-- [x] MCP server with 6 tools
-- [x] Circle Gateway integration
-- [x] Circle Paymaster integration
-- [x] Yellow Nitrolite state channels
-- [x] ENS resolution
+- [x] MCP server with 7 tools
+- [x] Circle Gateway integration (multi-chain balance)
+- [x] Circle Paymaster integration (gas-free USDC transfers)
+- [x] Yellow Nitrolite state channels (micropayments)
+- [x] ENS resolution (name-based payments)
+- [x] React demo (real-time micropayment streaming UI)
+- [x] Landing page
 - [ ] Demo video
-- [ ] React dashboard (real-time feed)
 
 **Post-Hackathon:**
 - [ ] Publish to npm as `@agentpay/mcp`
